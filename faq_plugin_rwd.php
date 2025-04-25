@@ -14,16 +14,17 @@ if (!defined('ABSPATH')) {
 }
 
 // Register CPT: FAQ
-function faq_rwd_register_faq_cpt() {
+function faq_rwd_register_faq_cpt()
+{
     $labels = [
         'name' => __('FAQ', 'simple-faq-plugin'),
-        'singular_name' => 'FAQ',
-        'add_new' => 'Dodaj FAQ',
-        'add_new_item' => 'Dodaj nowe pytanie',
-        'edit_item' => 'Edytuj pytanie',
-        'new_item' => 'Nowe pytanie',
-        'view_item' => 'Zobacz pytanie',
-        'search_items' => 'Szukaj FAQ',
+        'singular_name' =>  __('FAQ', 'simple-faq-plugin'),
+        'add_new' =>  __('Dodaj FAQ', 'simple-faq-plugin'),
+        'add_new_item' => __('Dodaj nowe pytanie', 'simple-faq-plugin'),
+        'edit_item' =>  __('Edytuj pytanie', 'simple-faq-plugin'),
+        'new_item' =>  __('Nowe pytanie', 'simple-faq-plugin'),
+        'view_item' =>  __('Zobacz pytanie', 'simple-faq-plugin'),
+        'search_items' => __('Szukaj FAQ', 'simple-faq-plugin'),
     ];
 
     $args = [
@@ -40,7 +41,8 @@ function faq_rwd_register_faq_cpt() {
 add_action('init', 'faq_rwd_register_faq_cpt');
 
 // Shortcode to display FAQ
-function faq_rwd_render_faq_shortcode($atts) {
+function faq_rwd_render_faq_shortcode($atts)
+{
     $faq_query = new WP_Query([
         'post_type' => 'faq_rwd',
         'posts_per_page' => -1,
@@ -68,14 +70,32 @@ add_shortcode('wp_faq_rwd', 'faq_rwd_render_faq_shortcode');
 
 // inline css for FAQ
 // This is a simple way to add CSS styles inline. For a production plugin, consider using wp_enqueue_style() for better performance and organization.
-function faq_rwd_enqueue_styles() {
-    ?>
+function faq_rwd_enqueue_styles()
+{
+?>
     <style>
-    .faq_rwd-faq-list { margin-top: 20px; }
-    .faq_rwd-faq-item { margin-bottom: 15px; }
-    .faq_rwd-faq-question { display: block; font-weight: bold; margin-bottom: 5px; }
-    .faq_rwd-faq-answer { padding-left: 10px; display: none; }
-    .faq_rwd-answer.open { display: block;}
+        .faq_rwd-faq-list {
+            margin-top: 20px;
+        }
+
+        .faq_rwd-faq-item {
+            margin-bottom: 15px;
+        }
+
+        .faq_rwd-faq-question {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .faq_rwd-faq-answer {
+            padding-left: 10px;
+            display: none;
+        }
+
+        .faq_rwd-answer.open {
+            display: block;
+        }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -92,8 +112,7 @@ function faq_rwd_enqueue_styles() {
                 });
             });
         });
-    </script>      
-        <?php
+    </script>
+<?php
 }
 add_action('wp_head', 'faq_rwd_enqueue_styles');
-
