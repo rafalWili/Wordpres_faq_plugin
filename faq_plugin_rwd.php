@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WordPress FAQ Plugin
-Description: Adds FAQ as CPT and shortcode to display them on the site.
+Description: Dodaje FAQ jako CPT i shortcode do wyświetlania na stronie.
 Version: 1.0
 Author: Rafał Wiliński
 Author URI: https://rafalwilinski.com
@@ -13,18 +13,28 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+function faq_rwd_load_textdomain() {
+    load_plugin_textdomain(
+        'faq_plugin_rwd',
+        false,
+        dirname(plugin_basename(__FILE__)) . '/languages'
+    );
+}
+add_action('plugins_loaded', 'faq_rwd_load_textdomain');
+
+
 // Register CPT: FAQ
 function faq_rwd_register_faq_cpt()
 {
     $labels = [
-        'name' => __('FAQ', 'simple-faq-plugin'),
-        'singular_name' =>  __('FAQ', 'simple-faq-plugin'),
-        'add_new' =>  __('Dodaj FAQ', 'simple-faq-plugin'),
-        'add_new_item' => __('Dodaj nowe pytanie', 'simple-faq-plugin'),
-        'edit_item' =>  __('Edytuj pytanie', 'simple-faq-plugin'),
-        'new_item' =>  __('Nowe pytanie', 'simple-faq-plugin'),
-        'view_item' =>  __('Zobacz pytanie', 'simple-faq-plugin'),
-        'search_items' => __('Szukaj FAQ', 'simple-faq-plugin'),
+        'name' => __('FAQ', 'faq_plugin_rwd'),
+        'singular_name' =>  __('FAQ', 'faq_plugin_rwd'),
+        'add_new' =>  __('Dodaj FAQ', 'faq_plugin_rwd'),
+        'add_new_item' => __('Dodaj nowe pytanie', 'faq_plugin_rwd'),
+        'edit_item' =>  __('Edytuj pytanie', 'faq_plugin_rwd'),
+        'new_item' =>  __('Nowe pytanie', 'faq_plugin_rwd'),
+        'view_item' =>  __('Zobacz pytanie', 'faq_plugin_rwd'),
+        'search_items' => __('Szukaj FAQ', 'faq_plugin_rwd'),
     ];
 
     $args = [

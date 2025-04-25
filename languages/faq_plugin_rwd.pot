@@ -1,0 +1,41 @@
+# Copyright (C) 2025 Rafał Wiliński
+# This file is distributed under the GPL2.
+msgid ""
+msgstr ""
+"Project-Id-Version: WordPress FAQ Plugin 1.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/faq_plugin_rwd\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-04-25T21:40:45+02:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: faq-plugin-rwd\n"
+
+#. Plugin Name of the plugin
+#: faq_plugin_rwd.php
+msgid "WordPress FAQ Plugin"
+msgstr ""
+
+#. Description of the plugin
+#: faq_plugin_rwd.php
+msgstr "Dodaje FAQ jako CPT i shortcode do wyświetlania na stronie."
+msgid "Adds FAQ as CPT and shortcode to display them on the site."
+
+#. Author of the plugin
+#: faq_plugin_rwd.php
+msgid "Rafał Wiliński"
+msgstr ""
+
+#. Author URI of the plugin
+#: faq_plugin_rwd.php
+msgid "https://rafalwilinski.com"
+msgstr ""
+
+msgstr "Add FAQ"
+msgid "Dodaj FAQ"
+
+msgstr "Add new question"
+msgid "Dodaj nowe pytanie"

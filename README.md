@@ -22,3 +22,6 @@ Prosty plugin do zarządzania pytaniami FAQ jako custom post type. Wyświetlaj j
 == Changelog ==
 = 1.0 =
 * Pierwsze wydanie
+
+generowanie translakcji bedac w folderze languages run:
+msgfmt faq_plugin_rwd-en_US.po -o faq_plugin_rwd-en_US.mo
