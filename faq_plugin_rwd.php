@@ -69,11 +69,31 @@ add_shortcode('wp_faq_rwd', 'faq_rwd_render_faq_shortcode');
 // inline css for FAQ
 // This is a simple way to add CSS styles inline. For a production plugin, consider using wp_enqueue_style() for better performance and organization.
 function faq_rwd_enqueue_styles() {
-    echo '<style>
+    ?>
+    <style>
     .faq_rwd-faq-list { margin-top: 20px; }
     .faq_rwd-faq-item { margin-bottom: 15px; }
     .faq_rwd-faq-question { display: block; font-weight: bold; margin-bottom: 5px; }
-    .faq_rwd-faq-answer { padding-left: 10px; }
-    </style>';
+    .faq_rwd-faq-answer { padding-left: 10px; display: none; }
+    .faq_rwd-answer.open { display: block;}
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = document.querySelectorAll('.faq_rwd-faq-question');
+            questions.forEach(question => {
+                question.addEventListener('click', function() {
+                    const answer = this.nextElementSibling;
+                    answer.classList.toggle('open');
+                    if (answer.classList.contains('open')) {
+                        answer.style.display = 'block';
+                    } else {
+                        answer.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>      
+        <?php
 }
 add_action('wp_head', 'faq_rwd_enqueue_styles');
+
