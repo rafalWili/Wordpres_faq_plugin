@@ -126,3 +126,90 @@ function faq_rwd_enqueue_styles()
 <?php
 }
 add_action('wp_head', 'faq_rwd_enqueue_styles');
+
+
+function faq_plugin_rwd_add_admin_menu() {
+    add_menu_page(
+        'Ustawienia FAQ', // Tytuł strony
+        'FAQ Settings', // Nazwa menu
+        'manage_options', // Wymagane uprawnienia (administrator)
+        'faq_plugin_rwd_settings', // Slug
+        'faq_plugin_rwd_settings_page', // Funkcja wyświetlająca stronę
+        'dashicons-format-chat', // Ikona menu
+        20 // Pozycja w menu
+    );
+
+    // Dodanie podmenu
+    add_submenu_page(
+        'faq_plugin_rwd_settings', // Rodzic (tutaj menu główne)
+        'Ustawienia FAQ', // Tytuł strony podmenu
+        'Ustawienia', // Tytuł menu
+        'manage_options', // Wymagane uprawnienia
+        'faq_plugin_rwd_settings', // Slug
+        'faq_plugin_rwd_settings_page' // Funkcja wyświetlająca stronę
+    );
+}
+add_action('admin_menu', 'faq_plugin_rwd_add_admin_menu');
+
+
+function faq_plugin_rwd_settings_page() {
+    ?>
+    <div class="wrap">
+        <h1>Ustawienia FAQ</h1>
+        <form method="post" action="options.php">
+            <?php
+            // Wykorzystanie funkcji WordPressa do wstawienia odpowiednich pól
+            settings_fields('faq_plugin_rwd_options_group'); 
+            do_settings_sections('faq_plugin_rwd_settings');
+            ?>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Zawsze otwarty FAQ</th>
+                    <td><input type="checkbox" name="faq_plugin_rwd_always_open" value="1" <?php checked(1, get_option('faq_plugin_rwd_always_open'), true); ?> /></td>
+                </tr>
+
+                <tr valign="top">
+                    <th scope="row">Kolor tekstu pytania</th>
+                    <td><input type="text" name="faq_plugin_rwd_question_text_color" value="<?php echo esc_attr(get_option('faq_plugin_rwd_question_text_color')); ?>" /></td>
+                </tr>
+
+                <tr valign="top">
+                    <th scope="row">Kolor tła pytania</th>
+                    <td><input type="text" name="faq_plugin_rwd_question_bg_color" value="<?php echo esc_attr(get_option('faq_plugin_rwd_question_bg_color')); ?>" /></td>
+                </tr>
+
+                <tr valign="top">
+                    <th scope="row">Kolor obramowania pytania</th>
+                    <td><input type="text" name="faq_plugin_rwd_question_border_color" value="<?php echo esc_attr(get_option('faq_plugin_rwd_question_border_color')); ?>" /></td>
+                </tr>
+            </table>
+
+            <?php submit_button(); ?>
+        </form>
+    </div>
+    <?php
+}
+function faq_plugin_rwd_register_settings() {
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_always_open');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_text_color');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_bg_color');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_border_color');
+}
+add_action('admin_init', 'faq_plugin_rwd_register_settings');
+
+function faq_plugin_rwd_get_faq_style() {
+    // Odczytanie ustawień
+    $text_color = get_option('faq_plugin_rwd_question_text_color', '#000000'); // domyślny kolor: czarny
+    $bg_color = get_option('faq_plugin_rwd_question_bg_color', '#FFFFFF'); // domyślny kolor: biały
+    $border_color = get_option('faq_plugin_rwd_question_border_color', '#000000'); // domyślny kolor: czarny
+
+    // Dodanie stylów CSS do FAQ
+    echo '<style>
+        .faq_rwd-faq-question {
+            color: ' . esc_attr($text_color) . ';
+            background-color: ' . esc_attr($bg_color) . ';
+            border: 1px solid ' . esc_attr($border_color) . ';
+        }
+    </style>';
+}
+add_action('wp_head', 'faq_plugin_rwd_get_faq_style');
