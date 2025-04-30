@@ -72,7 +72,7 @@ const FAQSettings = () => {
             <SettingElement name="answer-bg-color" type="color" value={answerBGColor} setValue={setAnswerBGColor} label="Kolor tła" />
           </section>
 
-          <button onClick={saveSettings}>Zapisz ustawienia</button>
+          <button className="saveBtn" onClick={saveSettings}>Zapisz ustawienia</button>
         </aside>
 
         <FaqPreview questionTextColor={questionTextColor} questionBGColor={questionBGColor} answerTextColor={answerTextColor} answerBGColor={answerBGColor} />
