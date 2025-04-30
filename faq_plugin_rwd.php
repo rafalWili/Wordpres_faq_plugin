@@ -78,6 +78,69 @@ function faq_rwd_render_faq_shortcode($atts)
 }
 add_shortcode('wp_faq_rwd', 'faq_rwd_render_faq_shortcode');
 
+
+/*Register Api for FAQ interface */
+function faq_plugin_rwd_register_api_endpoints() {
+
+    error_log('Rejestracja endpointów FAQ API'); // To zapisuje wiadomość do logów PHP
+
+
+    register_rest_route('faq/v1', '/save-settings', array(
+        'methods' => 'POST',
+        'callback' => 'faq_plugin_rwd_save_settings',
+        'permission_callback' => function() {
+            return current_user_can('manage_options'); // Sprawdzanie uprawnień
+        },
+    ));
+
+    register_rest_route('faq/v1', '/get-settings', array(
+        'methods' => 'GET',
+        'callback' => 'faq_plugin_rwd_get_settings',
+        'permission_callback' => '__return_true', // Pozwól na odczyt dla każdego
+    ));
+}
+add_action('rest_api_init', 'faq_plugin_rwd_register_api_endpoints');
+
+function faq_plugin_rwd_save_settings(WP_REST_Request $request) {
+    $settings = $request->get_json_params();
+    $question_text_color = sanitize_hex_color($settings['question_text_color']);
+    $question_background_color = sanitize_hex_color($settings['question_background_color']);
+    // Answers
+    $answer_text_color = sanitize_hex_color($settings['answer_text_color']);
+    $answer_background_color = sanitize_hex_color($settings['answer_background_color']);
+
+    // Save the settings to the database Questions
+    update_option('faq_plugin_rwd_question_text_color', $question_text_color);
+    update_option('faq_plugin_rwd_question_bg_color', $question_background_color);
+    // save the settings to the database Answers
+    update_option('faq_plugin_rwd_answer_text_color', $answer_text_color);
+    update_option('faq_plugin_rwd_answer_bg_color', $answer_background_color);
+
+
+    return rest_ensure_response(array('status' => 'success'));
+}
+
+
+function faq_plugin_rwd_get_settings() {
+    $question_text_color = get_option('faq_plugin_rwd_question_text_color', '#000000'); 
+    $question_background_color = get_option('faq_plugin_rwd_question_bg_color', '#ffffff'); 
+    // Answers
+    $answer_text_color = get_option('faq_plugin_rwd_answer_text_color', '#000000'); 
+    $answer_background_color = get_option('faq_plugin_rwd_answer_bg_color', '#ffffff'); 
+
+    global $wpdb;
+    $options = $wpdb->get_results( "SELECT option_name, option_value FROM $wpdb->options" );
+    
+    return rest_ensure_response(array(
+        'question_text_color' => $question_text_color,
+        'question_background_color' => $question_background_color,
+        'answer_text_color' => $answer_text_color,
+        'answer_background_color' => $answer_background_color
+    ));
+
+}
+
+
 // inline css for FAQ
 // This is a simple way to add CSS styles inline. For a production plugin, consider using wp_enqueue_style() for better performance and organization.
 function faq_rwd_enqueue_styles()
@@ -86,6 +149,8 @@ function faq_rwd_enqueue_styles()
     <style>
         .faq_rwd-faq-list {
             margin-top: 20px;
+            font-size: 20px;
+
         }
 
         .faq_rwd-faq-item {
@@ -95,14 +160,19 @@ function faq_rwd_enqueue_styles()
         .faq_rwd-faq-question {
             display: block;
             font-weight: bold;
-            margin-bottom: 5px;
+            text-transform: capitalize;
         }
 
         .faq_rwd-faq-answer {
+            padding-bottom: 1rem;
             padding-left: 10px;
+            padding-top: 1rem;
             display: none;
         }
-
+        .faq_rwd-faq-answer p{
+            margin: 0;
+            padding: 0;
+        }
         .faq_rwd-answer.open {
             display: block;
         }
@@ -151,41 +221,36 @@ function faq_plugin_rwd_add_admin_menu() {
 }
 add_action('admin_menu', 'faq_plugin_rwd_add_admin_menu');
 
+function faq_plugin_rwd_enqueue_react_app() {
+    $plugin_url = plugin_dir_url(__FILE__) . 'apps/faq-app/build/';
+    $plugin_path = plugin_dir_path(__FILE__) . 'apps/faq-app/build/';
+
+    $js_files = glob($plugin_path . 'static/js/main.*.js');
+    $css_files = glob($plugin_path . 'static/css/main.*.css');
+
+    if (!empty($js_files)) {
+        $js_file = basename($js_files[0]);
+        wp_enqueue_script('faq-plugin-react-app', $plugin_url . 'static/js/' . $js_file, array(), null, true);
+
+        wp_localize_script('faq-plugin-react-app', 'faqPluginSettings', array(
+            'apiUrl' => esc_url_raw(rest_url()),
+            'nonce'  => wp_create_nonce('wp_rest'),
+        ));
+    }
+
+    if (!empty($css_files)) {
+        $css_file = basename($css_files[0]);
+        wp_enqueue_style('faq-plugin-react-app-style', $plugin_url . 'static/css/' . $css_file);
+    }
+}
+
+add_action('admin_enqueue_scripts', 'faq_plugin_rwd_enqueue_react_app');
 
 function faq_plugin_rwd_settings_page() {
     ?>
     <div class="wrap">
-        <h1>Ustawienia FAQ</h1>
-        <form method="post" action="options.php">
-            <?php
-            // Wykorzystanie funkcji WordPressa do wstawienia odpowiednich pól
-            settings_fields('faq_plugin_rwd_options_group'); 
-            do_settings_sections('faq_plugin_rwd_settings');
-            ?>
-            <table class="form-table">
-                <tr valign="top">
-                    <th scope="row">Zawsze otwarty FAQ</th>
-                    <td><input type="checkbox" name="faq_plugin_rwd_always_open" value="1" <?php checked(1, get_option('faq_plugin_rwd_always_open'), true); ?> /></td>
-                </tr>
-
-                <tr valign="top">
-                    <th scope="row">Kolor tekstu pytania</th>
-                    <td><input type="text" name="faq_plugin_rwd_question_text_color" value="<?php echo esc_attr(get_option('faq_plugin_rwd_question_text_color')); ?>" /></td>
-                </tr>
-
-                <tr valign="top">
-                    <th scope="row">Kolor tła pytania</th>
-                    <td><input type="text" name="faq_plugin_rwd_question_bg_color" value="<?php echo esc_attr(get_option('faq_plugin_rwd_question_bg_color')); ?>" /></td>
-                </tr>
-
-                <tr valign="top">
-                    <th scope="row">Kolor obramowania pytania</th>
-                    <td><input type="text" name="faq_plugin_rwd_question_border_color" value="<?php echo esc_attr(get_option('faq_plugin_rwd_question_border_color')); ?>" /></td>
-                </tr>
-            </table>
-
-            <?php submit_button(); ?>
-        </form>
+        <h1>Ustawienia FAQ</h1> 
+        <div id="rootFaq"></div>
     </div>
     <?php
 }
@@ -193,23 +258,35 @@ function faq_plugin_rwd_register_settings() {
     register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_always_open');
     register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_text_color');
     register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_bg_color');
-    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_border_color');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_answer_text_color');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_answer_bg_color');
 }
 add_action('admin_init', 'faq_plugin_rwd_register_settings');
 
-function faq_plugin_rwd_get_faq_style() {
-    // Odczytanie ustawień
-    $text_color = get_option('faq_plugin_rwd_question_text_color', '#000000'); // domyślny kolor: czarny
-    $bg_color = get_option('faq_plugin_rwd_question_bg_color', '#FFFFFF'); // domyślny kolor: biały
-    $border_color = get_option('faq_plugin_rwd_question_border_color', '#000000'); // domyślny kolor: czarny
 
-    // Dodanie stylów CSS do FAQ
+
+
+
+function faq_plugin_rwd_get_faq_style() {
+
+    // read questions
+    $question_text_color = get_option('faq_plugin_rwd_question_text_color', '#000000'); 
+    $question_bg_color = get_option('faq_plugin_rwd_question_bg_color', '#FFFFFF'); 
+    // Answers
+    $answer_text_color = get_option('faq_plugin_rwd_answer_text_color', '#000000'); 
+    $answer_bg_color = get_option('faq_plugin_rwd_answer_bg_color', '#FFFFFF'); 
+
+    // styling CSS do FAQ
     echo '<style>
         .faq_rwd-faq-question {
-            color: ' . esc_attr($text_color) . ';
-            background-color: ' . esc_attr($bg_color) . ';
-            border: 1px solid ' . esc_attr($border_color) . ';
+            color: ' . esc_attr($question_text_color) . ';
+            background-color: ' . esc_attr($question_bg_color) . ';
+        }
+        .faq_rwd-faq-answer{
+            color: ' . esc_attr($answer_text_color) . ';
+            background-color: ' . esc_attr($answer_bg_color) . ';
         }
     </style>';
 }
 add_action('wp_head', 'faq_plugin_rwd_get_faq_style');
+

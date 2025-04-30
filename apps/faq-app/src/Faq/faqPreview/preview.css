@@ -1,0 +1,36 @@
+.faq-preview {
+    padding: 1rem;
+    width: 100%;
+}
+
+.faq_rwd-faq-list {
+    margin-top: 20px;
+    font-size: 20px;
+}
+
+.faq_rwd-faq-item {
+    margin-bottom: 15px;
+}
+
+.faq_rwd-faq-question {
+    display: block;
+    font-weight: bold;
+    text-transform: capitalize;
+
+}
+
+.faq_rwd-faq-answer {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 10px;
+    display: none;
+    background-color: #fff;
+    p{
+        margin: 0;
+        padding: 0;
+    }
+}
+
+.faq_rwd-faq-answer.open {
+    display: block;
+}
