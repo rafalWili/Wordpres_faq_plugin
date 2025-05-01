@@ -1,4 +1,5 @@
-export const SettingElement = ({type, value, setValue, label, name} ) =>{
+
+export const SettingElement = ({type, value, setValue, label, name, inputSize} ) =>{
 
   const onChangeValue = (e) => {
     setValue(e.target.value);
@@ -12,6 +13,7 @@ export const SettingElement = ({type, value, setValue, label, name} ) =>{
                   value={value}
                   name={name}
                   onChange={onChangeValue}
+                  style={{ width: inputSize === 'small' ? '50px' : undefined }}
                 />
               </div>
     );

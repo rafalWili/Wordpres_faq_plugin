@@ -105,17 +105,51 @@ function faq_plugin_rwd_save_settings(WP_REST_Request $request) {
     $settings = $request->get_json_params();
     $question_text_color = sanitize_hex_color($settings['question_text_color']);
     $question_background_color = sanitize_hex_color($settings['question_background_color']);
-    // Answers
+    $question_padding = $settings['question_padding'];
+    $question_margin =  $settings['question_margin'];  
+    $question_font_size =  $settings['question_font_size'];  
+
+    $qBorderSelected = $settings['question_border_selected'];
+    $qBorder = $settings['question_border'];
+    $qBorderRadius = $settings['question_border_radius'];   
+    $qBorderWidth = $settings['question_border_width'];
+    $qBorderColor = $settings['question_border_color'];
+
+   // Answers
     $answer_text_color = sanitize_hex_color($settings['answer_text_color']);
     $answer_background_color = sanitize_hex_color($settings['answer_background_color']);
+    $answer_padding = $settings['answer_padding'];
+    $answer_margin =  $settings['answer_margin'];
+    $answer_font_size =  $settings['answer_font_size'];
+    $aBorderSelected = $settings['answer_border_selected'];
+    $aBorder = $settings['answer_border'];
+    $aBorderRadius = $settings['answer_border_radius'];
+    $aBorderWidth = $settings['answer_border_width'];
+    $aBorderColor = $settings['answer_border_color'];
 
     // Save the settings to the database Questions
     update_option('faq_plugin_rwd_question_text_color', $question_text_color);
     update_option('faq_plugin_rwd_question_bg_color', $question_background_color);
+    update_option('faq_plugin_rwd_question_padding', $question_padding); 
+    update_option('faq_plugin_rwd_question_margin', $question_margin); 
+    update_option('faq_plugin_rwd_question_font_size', $question_font_size);
+    update_option('faq_plugin_rwd_question_border_selected', $qBorderSelected);
+    update_option('faq_plugin_rwd_question_border', $qBorder);
+    update_option('faq_plugin_rwd_question_border_radius', $qBorderRadius);
+    update_option('faq_plugin_rwd_question_border_width', $qBorderWidth);
+    update_option('faq_plugin_rwd_question_border_color', $qBorderColor);
+
     // save the settings to the database Answers
     update_option('faq_plugin_rwd_answer_text_color', $answer_text_color);
     update_option('faq_plugin_rwd_answer_bg_color', $answer_background_color);
-
+    update_option('faq_plugin_rwd_answer_padding', $answer_padding);
+    update_option('faq_plugin_rwd_answer_margin', $answer_margin);
+    update_option('faq_plugin_rwd_answer_font_size', $answer_font_size);
+    update_option('faq_plugin_rwd_answer_border_selected', $aBorderSelected);
+    update_option('faq_plugin_rwd_answer_border', $aBorder);
+    update_option('faq_plugin_rwd_answer_border_radius', $aBorderRadius);
+    update_option('faq_plugin_rwd_answer_border_width', $aBorderWidth);
+    update_option('faq_plugin_rwd_answer_border_color', $aBorderColor);
 
     return rest_ensure_response(array('status' => 'success'));
 }
@@ -124,18 +158,53 @@ function faq_plugin_rwd_save_settings(WP_REST_Request $request) {
 function faq_plugin_rwd_get_settings() {
     $question_text_color = get_option('faq_plugin_rwd_question_text_color', '#000000'); 
     $question_background_color = get_option('faq_plugin_rwd_question_bg_color', '#ffffff'); 
+    $question_padding = get_option('faq_plugin_rwd_question_padding', [10,10,10,10]); 
+    $question_margin = get_option('faq_plugin_rwd_question_margin', [0,0,10,0]); 
+    $question_font_size = get_option('faq_plugin_rwd_question_font_size', '16');
+    $qBorderSelected = get_option('faq_plugin_rwd_question_border_selected', true);
+    $qBorder = get_option('faq_plugin_rwd_question_border', [true,true,true,true]);
+    $qBorderRadius = get_option('faq_plugin_rwd_question_border_radius', '0');
+    $qBorderWidth = get_option('faq_plugin_rwd_question_border_width', '1');
+    $qBorderColor = get_option('faq_plugin_rwd_question_border_color', '#000000');
+
+
     // Answers
     $answer_text_color = get_option('faq_plugin_rwd_answer_text_color', '#000000'); 
     $answer_background_color = get_option('faq_plugin_rwd_answer_bg_color', '#ffffff'); 
+    $answer_padding = get_option('faq_plugin_rwd_answer_padding', [0,0,0,10]);
+    $answer_margin = get_option('faq_plugin_rwd_answer_margin', [0,0,10,0]);
+    $answer_font_size = get_option('faq_plugin_rwd_answer_font_size', '16');
+    $aBorderSelected = get_option('faq_plugin_rwd_answer_border_selected', true);
+    $aBorder = get_option('faq_plugin_rwd_answer_border', [true,true,true,true]);
+    $aBorderRadius = get_option('faq_plugin_rwd_answer_border_radius', '0');
+    $aBorderWidth = get_option('faq_plugin_rwd_answer_border_width', '1');
+    $aBorderColor = get_option('faq_plugin_rwd_answer_border_color', '#000000');
 
-    global $wpdb;
-    $options = $wpdb->get_results( "SELECT option_name, option_value FROM $wpdb->options" );
-    
+
+   
     return rest_ensure_response(array(
         'question_text_color' => $question_text_color,
         'question_background_color' => $question_background_color,
         'answer_text_color' => $answer_text_color,
-        'answer_background_color' => $answer_background_color
+        'answer_background_color' => $answer_background_color,
+        'question_padding' => $question_padding,
+        'question_margin' => $question_margin,
+        'question_border_selected' => $qBorderSelected,
+        'question_border' => $qBorder,
+        'question_border_radius' => $qBorderRadius,
+        'question_border_width' => $qBorderWidth,
+        'question_border_color' => $qBorderColor,
+        'answer_padding' => $answer_padding,
+        'answer_margin' => $answer_margin,
+        'question_font_size' => $question_font_size,
+        'answer_font_size' => $answer_font_size,
+        'answer_border_selected' => $aBorderSelected,
+        'answer_border' => $aBorder,
+        'answer_border_radius' => $aBorderRadius,
+        'answer_border_width' => $aBorderWidth,
+        'answer_border_color' => $aBorderColor,
+
+
     ));
 
 }
@@ -153,14 +222,13 @@ function faq_rwd_enqueue_styles()
 
         }
 
-        .faq_rwd-faq-item {
-            margin-bottom: 15px;
-        }
-
         .faq_rwd-faq-question {
             display: block;
             font-weight: bold;
             text-transform: capitalize;
+        }
+        .faq_rwd-faq-question:hover{
+            cursor: pointer;
         }
 
         .faq_rwd-faq-answer {
@@ -168,7 +236,10 @@ function faq_rwd_enqueue_styles()
             padding-left: 10px;
             padding-top: 1rem;
             display: none;
+            text-transform: capitalize;
+
         }
+        
         .faq_rwd-faq-answer p{
             margin: 0;
             padding: 0;
@@ -200,23 +271,23 @@ add_action('wp_head', 'faq_rwd_enqueue_styles');
 
 function faq_plugin_rwd_add_admin_menu() {
     add_menu_page(
-        'Ustawienia FAQ', // Tytuł strony
-        'FAQ Settings', // Nazwa menu
-        'manage_options', // Wymagane uprawnienia (administrator)
-        'faq_plugin_rwd_settings', // Slug
-        'faq_plugin_rwd_settings_page', // Funkcja wyświetlająca stronę
-        'dashicons-format-chat', // Ikona menu
+        'Ustawienia FAQ',
+        'FAQ Settings', 
+        'manage_options', 
+        'faq_plugin_rwd_settings', 
+        'faq_plugin_rwd_settings_page',
+        'dashicons-format-chat',
         20 // Pozycja w menu
     );
 
     // Dodanie podmenu
     add_submenu_page(
-        'faq_plugin_rwd_settings', // Rodzic (tutaj menu główne)
-        'Ustawienia FAQ', // Tytuł strony podmenu
-        'Ustawienia', // Tytuł menu
-        'manage_options', // Wymagane uprawnienia
-        'faq_plugin_rwd_settings', // Slug
-        'faq_plugin_rwd_settings_page' // Funkcja wyświetlająca stronę
+        'faq_plugin_rwd_settings', 
+        'Ustawienia FAQ',
+        'Ustawienia',
+        'manage_options', 
+        'faq_plugin_rwd_settings',
+        'faq_plugin_rwd_settings_page' 
     );
 }
 add_action('admin_menu', 'faq_plugin_rwd_add_admin_menu');
@@ -254,17 +325,35 @@ function faq_plugin_rwd_settings_page() {
     </div>
     <?php
 }
+
 function faq_plugin_rwd_register_settings() {
     register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_always_open');
     register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_text_color');
     register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_bg_color');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_padding');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_margin');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_font_size');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_border_selected');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_border');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_border_radius');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_border_width');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_border_color');
+    
     register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_answer_text_color');
     register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_answer_bg_color');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_answer_padding');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_answer_margin');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_question_font_size');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_answer_font_size');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_answer_border_selected');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_answer_border');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_answer_border_radius');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_answer_border_width');
+    register_setting('faq_plugin_rwd_options_group', 'faq_plugin_rwd_answer_border_color');
+    
+
 }
 add_action('admin_init', 'faq_plugin_rwd_register_settings');
-
-
-
 
 
 function faq_plugin_rwd_get_faq_style() {
@@ -272,19 +361,70 @@ function faq_plugin_rwd_get_faq_style() {
     // read questions
     $question_text_color = get_option('faq_plugin_rwd_question_text_color', '#000000'); 
     $question_bg_color = get_option('faq_plugin_rwd_question_bg_color', '#FFFFFF'); 
+    $question_padding = get_option('faq_plugin_rwd_question_padding', [10,10,10,10]);
+    $question_margin = get_option('faq_plugin_rwd_question_margin', [0,0,10,0]);  
+    $question_font_size = get_option('faq_plugin_rwd_question_font_size', '16');
+    $qBorderSelected = get_option('faq_plugin_rwd_question_border_selected', true);
+    $qBorder = get_option('faq_plugin_rwd_question_border', [true,true,true,true]);
+    $qBorderRadius = get_option('faq_plugin_rwd_question_border_radius', '0');
+    $qBorderWidth = get_option('faq_plugin_rwd_question_border_width', '1');
+    $qBorderColor = get_option('faq_plugin_rwd_question_border_color', '#000000');
+
+
     // Answers
     $answer_text_color = get_option('faq_plugin_rwd_answer_text_color', '#000000'); 
     $answer_bg_color = get_option('faq_plugin_rwd_answer_bg_color', '#FFFFFF'); 
-
+    $answer_padding = get_option('faq_plugin_rwd_answer_padding', [0,0,0,10]);
+    $answer_margin = get_option('faq_plugin_rwd_answer_margin', [0,0,10,0]);
+    $answer_font_size = get_option('faq_plugin_rwd_answer_font_size', '16');
+    $aBorderSelected = get_option('faq_plugin_rwd_answer_border_selected', true);
+    $aBorder = get_option('faq_plugin_rwd_answer_border', [true,true,true,true]);
+    $aBorderRadius = get_option('faq_plugin_rwd_answer_border_radius', '0');
+    $aBorderWidth = get_option('faq_plugin_rwd_answer_border_width', '1');
+    $aBorderColor = get_option('faq_plugin_rwd_answer_border_color', '#000000');
+        
     // styling CSS do FAQ
     echo '<style>
+        .faq_rwd-faq-item{
+            margin: ' . esc_attr($question_margin[0]) . 'px '  . esc_attr($question_margin[1]) . 'px ' . esc_attr($question_margin[2]) . 'px ' . esc_attr($question_margin[3]) . 'px;
+        }
         .faq_rwd-faq-question {
             color: ' . esc_attr($question_text_color) . ';
             background-color: ' . esc_attr($question_bg_color) . ';
+            padding: ' . esc_attr($question_padding[0]) . 'px '  . esc_attr($question_padding[1]) . 'px ' . esc_attr($question_padding[2]) . 'px ' . esc_attr($question_padding[3]) . 'px;
+            font-size: ' . esc_attr($question_font_size) . 'px;
+            border-width: ' . esc_attr($qBorderWidth) . 'px;
+            border-style: ' . ($qBorderSelected ? 'solid' : 'none') . ';
+            border-color: ' . ($qBorderColor ?  esc_attr($qBorderColor) : '#000000' ) . ';
+            border-top-width: ' . ($qBorder[0] ? esc_attr($qBorderWidth) : '0') . 'px;
+            border-right-width: ' . ($qBorder[1] ? esc_attr($qBorderWidth) : '0') . 'px;
+            border-bottom-width: ' . ($qBorder[2] ? esc_attr($qBorderWidth) : '0') . 'px;
+            border-left-width: ' . ($qBorder[3] ? esc_attr($qBorderWidth) : '0') . 'px;   
+            border-top-left-radius: ' . ($qBorderRadius[1] ? esc_attr($qBorderRadius[1]) : '0') . 'px;
+            border-top-right-radius: ' . ($qBorderRadius[2] ? esc_attr($qBorderRadius[2]) : '0') . 'px;
+            border-bottom-right-radius: ' . ($qBorderRadius[0] ? esc_attr($qBorderRadius[0]) : '0') . 'px;
+            border-bottom-left-radius: ' . ($qBorderRadius[3] ? esc_attr($qBorderRadius[3]) : '0') . 'px;
+
+
         }
         .faq_rwd-faq-answer{
             color: ' . esc_attr($answer_text_color) . ';
             background-color: ' . esc_attr($answer_bg_color) . ';
+            padding: ' . esc_attr($answer_padding[0]) . 'px '  . esc_attr($answer_padding[1]) . 'px ' . esc_attr($answer_padding[2]) . 'px ' . esc_attr($answer_padding[3]) . 'px;
+            margin: ' . esc_attr($answer_margin[0]) . 'px '  . esc_attr($answer_margin[1]) . 'px ' . esc_attr($answer_margin[2]) . 'px ' . esc_attr($answer_margin[3]) . 'px;
+            font-size: ' . esc_attr($answer_font_size) . 'px;
+            border-width: ' . esc_attr($aBorderWidth) . 'px;
+            border-style: ' . ($aBorderSelected ? 'solid' : 'none') . ';
+            border-color: ' . ($aBorderColor ?  esc_attr($aBorderColor) : '#000000' ) . ';
+            border-top-width: ' . ($aBorder[0] ? esc_attr($aBorderWidth) : '0') . 'px;
+            border-right-width: ' . ($aBorder[1] ? esc_attr($aBorderWidth) : '0') . 'px;
+            border-bottom-width: ' . ($aBorder[2] ? esc_attr($aBorderWidth) : '0') . 'px;
+            border-left-width: ' . ($aBorder[3] ? esc_attr($aBorderWidth) : '0') . 'px;
+              border-top-left-radius: ' . ($aBorderRadius[1] ? esc_attr($aBorderRadius[1]) : '0') . 'px;
+            border-top-right-radius: ' . ($aBorderRadius[2] ? esc_attr($aBorderRadius[2]) : '0') . 'px;
+            border-bottom-right-radius: ' . ($aBorderRadius[0] ? esc_attr($aBorderRadius[0]) : '0') . 'px;
+            border-bottom-left-radius: ' . ($aBorderRadius[3] ? esc_attr($aBorderRadius[3]) : '0') . 'px;
+
         }
     </style>';
 }
